@@ -40,7 +40,7 @@
         <dependency>
             <groupId>me.alf21</groupId>
             <artifactId>textdraw-system</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.2-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
