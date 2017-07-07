@@ -1,7 +1,7 @@
 package textdraws;
 
 import engine.GameEngine;
-import games.FourWins.TikTakToe;
+import games.TikTakToe.TikTakToe;
 import me.alf21.textdrawsystem.TextdrawSystem;
 import me.alf21.textdrawsystem.content.components.list.List;
 import me.alf21.textdrawsystem.dialogs.layouts.DialogLayout;

@@ -49,3 +49,6 @@ Temporary Items
 # Addendum
 .idea/*
 target/*
+Minigames.iml
+.gitignore
+.gitattributes

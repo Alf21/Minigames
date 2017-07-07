@@ -1,4 +1,4 @@
-package games.FourWins;
+package games.TikTakToe;
 
 import engine.GameEngine;
 import games.GameType_Multiplayer;
