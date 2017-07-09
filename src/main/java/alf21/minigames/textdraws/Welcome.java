@@ -1,7 +1,9 @@
-package textdraws;
+package alf21.minigames.textdraws;
 
-import engine.GameEngine;
-import games.TikTakToe.TikTakToe;
+import alf21.minigames.Minigames;
+import alf21.minigames.engine.GameEngine;
+import alf21.minigames.games.TikTakToe.TikTakToe;
+import alf21.minigames.lifecycles.Lifecycle;
 import me.alf21.textdrawsystem.TextdrawSystem;
 import me.alf21.textdrawsystem.content.components.list.List;
 import me.alf21.textdrawsystem.dialogs.layouts.DialogLayout;
@@ -17,13 +19,9 @@ public class Welcome {
 
 	private Player player;
 	private Panel panel;
-	private GameEngine gameEngine;
-	private PlayerLifecycleHolder playerLifecycleHolder;
 
-	public Welcome(Player player, GameEngine gameEngine, PlayerLifecycleHolder playerLifecycleHolder) {
+	public Welcome(Player player) {
 		this.player = player;
-		this.gameEngine = gameEngine;
-		this.playerLifecycleHolder = playerLifecycleHolder;
 		create();
 	}
 
@@ -47,13 +45,20 @@ public class Welcome {
 		PanelDialog gameSelection = TextdrawSystem.createPanelDialog(player);
 		gameSelection.setCaption("Game Selection");
 		List list = gameSelection.addList("game_selection");
+		// TikTakToe
 		list.addListItem("Tik Tak Toe").setClickHandler(handler -> {
 			try {
-				gameEngine.initGame(TikTakToe.class, player, playerLifecycleHolder);
+				GameEngine gameEngine = new GameEngine();
+				Minigames.getInstance().getPlayerLifecycleHolder().getObject(player, Lifecycle.class).setGameEngine(gameEngine);
+				gameEngine.initGame(TikTakToe.class, player);
 			} catch (IllegalAccessException | InstantiationException e) {
 				e.printStackTrace();
 			}
 		});
+		gameSelection.toggleOkButton(false);
+		gameSelection.setClickCancelHandler(handler -> new Welcome(player));
+		gameSelection.setCloseHandler(handler -> new Welcome(player));
+		gameSelection.show();
 	}
 
 	// TODO colorPicker for the own Color

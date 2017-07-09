@@ -1,5 +1,6 @@
-package lifecycles;
+package alf21.minigames.lifecycles;
 
+import alf21.minigames.engine.GameEngine;
 import me.alf21.textdrawsystem.container.Container;
 import net.gtaun.shoebill.common.player.PlayerLifecycleObject;
 import net.gtaun.shoebill.data.Color;
@@ -13,6 +14,7 @@ public class Lifecycle extends PlayerLifecycleObject {
 
 	private Color color;
 	private Container container;
+	private GameEngine gameEngine;
 
 	public Lifecycle(EventManager eventManager, Player player) {
 		super(eventManager, player);
@@ -42,5 +44,13 @@ public class Lifecycle extends PlayerLifecycleObject {
 
 	public void setContainer(Container container) {
 		this.container = container;
+	}
+
+	public GameEngine getGameEngine() {
+		return gameEngine;
+	}
+
+	public void setGameEngine(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
 	}
 }

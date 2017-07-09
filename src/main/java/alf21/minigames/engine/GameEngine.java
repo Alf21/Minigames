@@ -1,43 +1,48 @@
-package engine;
+package alf21.minigames.engine;
 
-import games.GameType_Multiplayer;
+import alf21.minigames.games.GameType_Multiplayer;
 import net.gtaun.shoebill.common.player.PlayerLifecycleHolder;
 import net.gtaun.shoebill.object.Player;
-import textdraws.Welcome;
+import alf21.minigames.textdraws.Welcome;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Alf21 on 07.07.2017 in the project 'minigames'.
  */
 public class GameEngine {
 
+	private Player host;
 	private int round;
 	private Player currentPlayer;
 	private GameType_Multiplayer game;
-	private PlayerLifecycleHolder playerLifecycleHolder;
 	private Player winner;
 	private List<Player> players;
 
 	public GameEngine() {
+		players = new ArrayList<>();
 		round = 0;
 	}
 
-	public void initGame(Class<?> gameClass, Player host, PlayerLifecycleHolder playerLifecycleHolder) throws IllegalAccessException, InstantiationException {
+	public void initGame(Class<?> gameClass, Player host) throws IllegalAccessException, InstantiationException {
+		this.host = host;
 		game = (GameType_Multiplayer) gameClass.newInstance();
-		game.init(host, this);
-		this.playerLifecycleHolder = playerLifecycleHolder;
+		game.init(this);
 	}
 
 	public void startGame() {
+		int r = new Random().nextInt(players.size());
+		currentPlayer = (Player) players.toArray()[r-1];
 		game.onGameBegins();
 	}
 
 	public void finishGame() {
 		game.onGameFinished();
 		for (Player player : getPlayers()) {
-			new Welcome(player, new GameEngine(), playerLifecycleHolder);
+			new Welcome(player);
 		}
 	}
 
@@ -58,12 +63,10 @@ public class GameEngine {
 		return game;
 	}
 
-	public PlayerLifecycleHolder getPlayerLifecycleHolder() {
-		return playerLifecycleHolder;
-	}
-
 	public boolean checkGameIsFinished() {
-		return game.isAbleToFinish();
+		if (!game.isAbleToFinish()) return false;
+		finishGame();
+		return true;
 	}
 
 	public Player getWinner() {
@@ -80,5 +83,9 @@ public class GameEngine {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
+	}
+
+	public Player getHost() {
+		return host;
 	}
 }

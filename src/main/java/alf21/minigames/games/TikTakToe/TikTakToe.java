@@ -1,8 +1,9 @@
-package games.TikTakToe;
+package alf21.minigames.games.TikTakToe;
 
-import engine.GameEngine;
-import games.GameType_Multiplayer;
-import lifecycles.Lifecycle;
+import alf21.minigames.Minigames;
+import alf21.minigames.engine.GameEngine;
+import alf21.minigames.games.GameType_Multiplayer;
+import alf21.minigames.lifecycles.Lifecycle;
 import me.alf21.textdrawsystem.TextdrawSystem;
 import me.alf21.textdrawsystem.container.Container;
 import me.alf21.textdrawsystem.content.components.ComponentData;
@@ -24,14 +25,14 @@ public class TikTakToe extends GameType_Multiplayer {
 	private int[][] field = new int[3][3];
 	private Vector2D lastMove;
 
-	public TikTakToe(Player host, GameEngine gameEngine) {
-		super(host, gameEngine);
+	public TikTakToe() {
+		super();
 	}
 
 	@Override
 	protected void initGame(PanelDialog panelDialog) {
 		if (getPlayers().size() != 1) {
-			error_invalidPlayerAmount(getHost(), getPlayers(), MAX_PLAYERS);
+			error_invalidPlayerAmount(getGameEngine().getHost(), getPlayers(), MAX_PLAYERS);
 			panelDialog.show();
 		}
 		else createGame();
@@ -63,7 +64,7 @@ public class TikTakToe extends GameType_Multiplayer {
 
 		int winner = checkWinCondition((int) lastMove.getY(), (int) lastMove.getX());
 		if (winner != 0) {
-			getGameEngine().setWinner((winner == 1) ? getHost() : (Player) getPlayers().toArray()[0]);
+			getGameEngine().setWinner((winner == 1) ? getGameEngine().getHost() : (Player) getPlayers().toArray()[0]);
 			return true;
 		}
 		return false;
@@ -72,7 +73,7 @@ public class TikTakToe extends GameType_Multiplayer {
 	private int checkWinCondition(int x, int y) {
 		// algorithm by https://stackoverflow.com/questions/1056316/algorithm-for-determining-tic-tac-toe-game-over
 		int n = field.length;
-		int s = (getGameEngine().getCurrentPlayer() == getHost()) ? 1 : 2;
+		int s = (getGameEngine().getCurrentPlayer() == getGameEngine().getHost()) ? 1 : 2;
 		//check end conditions
 
 		//check col
@@ -126,13 +127,14 @@ public class TikTakToe extends GameType_Multiplayer {
 	private void createGame() {
 		for (Player player : getGameEngine().getPlayers()) {
 			Container container = createTextdraws(player);
+			Minigames.getInstance().getPlayerLifecycleHolder().getObject(player, Lifecycle.class).setContainer(container);
 		}
 		getGameEngine().startGame();
 		for (Player player : getGameEngine().getPlayers()) {
-			getGameEngine().getPlayerLifecycleHolder().getObject(player, Lifecycle.class).getContainer().show();
+			Minigames.getInstance().getPlayerLifecycleHolder().getObject(player, Lifecycle.class).getContainer().show();
 		}
 		List<Player> players = new ArrayList<>(getPlayers());
-		players.add(getHost());
+		players.add(getGameEngine().getHost());
 		getGameEngine().setPlayers(players);
 	}
 
@@ -162,13 +164,13 @@ public class TikTakToe extends GameType_Multiplayer {
 
 	private void toggleButtonForPlayers(String name, List<Player> players, Player actionPlayer) {
 		for (Player player : players) {
-			Lifecycle lifecycle = getGameEngine().getPlayerLifecycleHolder().getObject(player, Lifecycle.class);
+			Lifecycle lifecycle = Minigames.getInstance().getPlayerLifecycleHolder().getObject(player, Lifecycle.class);
 			Button button = (Button) lifecycle.getContainer().getComponent("name");
 			button.setComponentData((ComponentData<Player>) actionPlayer);
 			button.getButtonTextdraw().setBoxColor(lifecycle.getColor());
 			int y = Integer.parseInt(button.getName().split("_")[1]);
 			int x = Integer.parseInt(button.getName().split("_")[2]);
-			field[y][x] = (actionPlayer == getHost()) ? 1 : 2;
+			field[y][x] = (actionPlayer == getGameEngine().getHost()) ? 1 : 2;
 			lastMove = new Vector2D(x, y);
 		}
 	}

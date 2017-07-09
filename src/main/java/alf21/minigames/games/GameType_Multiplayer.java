@@ -1,11 +1,11 @@
-package games;
+package alf21.minigames.games;
 
-import engine.GameEngine;
+import alf21.minigames.engine.GameEngine;
 import me.alf21.textdrawsystem.TextdrawSystem;
 import me.alf21.textdrawsystem.content.components.list.ListItem;
 import me.alf21.textdrawsystem.panelDialog.PanelDialog;
 import net.gtaun.shoebill.object.Player;
-import textdraws.Welcome;
+import alf21.minigames.textdraws.Welcome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +15,20 @@ import java.util.List;
  */
 public abstract class GameType_Multiplayer {
 
-	private Player host;
 	private List<Player> players;
 	private GameEngine gameEngine;
 
-	protected GameType_Multiplayer(Player host, GameEngine gameEngine) {
-		this.host = host;
+	protected GameType_Multiplayer() {
 		players = new ArrayList<>();
-		this.gameEngine = gameEngine;
 	}
 
 
-	public void init(Player host, GameEngine gameEngine) {
-		PanelDialog playerSelection = TextdrawSystem.getPanel(getHost()).createPanelDialog();
+	public void init(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
+		PanelDialog playerSelection = TextdrawSystem.getPanel(getGameEngine().getHost()).createPanelDialog();
 		me.alf21.textdrawsystem.content.components.list.List selectablePlayers = playerSelection.addList("playerSelection");
 		for (Player player : Player.get()) {
+			if (player == gameEngine.getHost()) continue;
 			ListItem listItem = selectablePlayers.addListItem(player.getName());
 			if(getPlayers().contains(player))
 				listItem.select();
@@ -44,7 +43,7 @@ public abstract class GameType_Multiplayer {
 				}
 			});
 		}
-		playerSelection.setClickCancelHandler(handler -> new Welcome(getHost(), getGameEngine(), gameEngine.getPlayerLifecycleHolder()));
+		playerSelection.setClickCancelHandler(handler -> new Welcome(getGameEngine().getHost()));
 		playerSelection.setClickOkHandler((handler, data) -> initGame(playerSelection));
 		playerSelection.show();
 	}
@@ -60,13 +59,8 @@ public abstract class GameType_Multiplayer {
 	public static void error_invalidPlayerAmount(Player player, List<Player> players, int neededAmount) {
 		if (players.size() + 1 != neededAmount) {
 			String string = (players.size() + 1 > neededAmount) ? (players.size() - neededAmount) + " less " : ((players.size() - neededAmount + 1) * -1) + " more ";
-			player.sendMessage("In this Game, just 2 Players are supported. Please select " + string + " player(s)." );
+			player.sendMessage("In this Game, just 2 Players are supported. Please select " + string + "player(s)." );
 		}
-	}
-
-
-	public Player getHost() {
-		return host;
 	}
 
 	public List<Player> getPlayers() {
