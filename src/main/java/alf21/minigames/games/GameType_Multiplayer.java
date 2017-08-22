@@ -15,30 +15,28 @@ import java.util.List;
  */
 public abstract class GameType_Multiplayer {
 
-	private List<Player> players;
 	private GameEngine gameEngine;
 
-	protected GameType_Multiplayer() {
-		players = new ArrayList<>();
-	}
+	protected GameType_Multiplayer() {}
 
 
 	public void init(GameEngine gameEngine) {
 		this.gameEngine = gameEngine;
+		getGameEngine().getPlayers().add(getGameEngine().getHost());
 		PanelDialog playerSelection = TextdrawSystem.getPanel(getGameEngine().getHost()).createPanelDialog();
 		me.alf21.textdrawsystem.content.components.list.List selectablePlayers = playerSelection.addList("playerSelection");
 		for (Player player : Player.get()) {
-			if (player == gameEngine.getHost()) continue;
+			if (player == gameEngine.getHost()) continue; // Him-/Herself
 			ListItem listItem = selectablePlayers.addListItem(player.getName());
-			if(getPlayers().contains(player))
+			if(getGameEngine().getPlayers().contains(player))
 				listItem.select();
 			listItem.setClickHandler(handler -> {
-				if (getPlayers().contains(player)) {
-					getPlayers().remove(player);
+				if (getGameEngine().getPlayers().contains(player)) {
+					getGameEngine().getPlayers().remove(player);
 					listItem.unselect();
 				}
 				else {
-					getPlayers().add(player);
+					getGameEngine().getPlayers().add(player);
 					listItem.select();
 				}
 			});
@@ -61,10 +59,6 @@ public abstract class GameType_Multiplayer {
 			String string = (players.size() + 1 > neededAmount) ? (players.size() - neededAmount) + " less " : ((players.size() - neededAmount + 1) * -1) + " more ";
 			player.sendMessage("In this Game, just 2 Players are supported. Please select " + string + "player(s)." );
 		}
-	}
-
-	public List<Player> getPlayers() {
-		return players;
 	}
 
 	public GameEngine getGameEngine() {

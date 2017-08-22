@@ -43,7 +43,7 @@ public class PlayerManager {
 		eventManagerNode.registerHandler(PlayerConnectEvent.class, (e) ->
 		{
 			Player player = e.getPlayer();
-			player.sendGameText(5000, 5, "~w~SA-MP: ~r~Las Venturas ~g~MoneyGrub");
+			player.sendGameText(5000, 5, "~w~SA-MP: ~r~Minigames");
 			Player.sendMessageToAll(Color.GREEN,player.getName()+" connected!");
 			Lifecycle playerLifecycle = playerLifecycleHolder.getObject(player, Lifecycle.class);
 

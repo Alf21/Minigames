@@ -35,7 +35,7 @@ public class GameEngine {
 
 	public void startGame() {
 		int r = new Random().nextInt(players.size());
-		currentPlayer = (Player) players.toArray()[r-1];
+		currentPlayer = (Player) players.toArray()[r];
 		game.onGameBegins();
 	}
 
